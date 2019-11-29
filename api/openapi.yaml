@@ -1,0 +1,1398 @@
+openapi: 3.0.2
+info:
+  description: The AEC Deltas OpenAPI Spec
+  title: aecdeltas
+  version: 0.0.1
+servers:
+- url: /
+security:
+- bearerAuth: []
+paths:
+  /projects:
+    get:
+      description: Query projects and retrieve a list. Will only return projects user
+        has `read` acces to.
+      parameters:
+      - description: The ID of the stream a project has permissions on
+        explode: true
+        in: query
+        name: stream
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The name of a project to search for
+        explode: true
+        in: query
+        name: name
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Level of permission granted to a resource. Leaving this blank
+          results in no permissions on a resource for a given role.
+        explode: true
+        in: query
+        name: permission
+        required: false
+        schema:
+          enum:
+          - read
+          - write
+          - admin
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Project'
+                title: Projects
+                type: array
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Project
+    post:
+      description: Create a new project.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProject'
+        description: New Project payload
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/created'
+          description: Created
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+      tags:
+      - Project
+  /projects/{id}:
+    delete:
+      description: Delete a project. Requires `admin` access to that project.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Project
+    get:
+      description: Get a project by ID. Required `read` access to that project.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Project
+    put:
+      description: Update a project's properties. Requires `write` access to that
+        project.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProject'
+        description: Project update payload
+        required: true
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Project
+  /streams:
+    get:
+      description: Query streams and retrieve a list. Will only return streams the
+        user has `read` access to.
+      parameters:
+      - description: The name of the stream to search for
+        explode: true
+        in: query
+        name: name
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The ID of the project a stream belongs to
+        explode: true
+        in: query
+        name: project
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The name of the schema a stream accepts
+        explode: true
+        in: query
+        name: schema
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Streams'
+                title: Streams
+                type: array
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Stream
+    post:
+      description: Create a new stream. User must have `contributor` access to the
+        project the stream belongs to.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewStream'
+        description: New Stream payload
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/created'
+          description: Created
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+      tags:
+      - Stream
+  /streams/{id}:
+    delete:
+      description: Delete a stream. The user must have `admin` access to the stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Stream
+    get:
+      description: Get a stream by ID. User must have `read` access to stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Stream
+    put:
+      description: Update a stream. User must have `write` access to the stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewStream'
+        description: Stream update payload
+        required: true
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Stream
+  /streams/{id}/branch:
+    post:
+      description: Branch/clone a stream. User must have `read` access to the stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchPayload'
+        description: Stream branch payload
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: Created
+      tags:
+      - Stream
+  /streams/{id}/merge:
+    post:
+      description: Merge two streams. User must have `write` access to the stream
+        identified in the url path and `read` access to the stream identified in the
+        request body.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergePayload'
+        description: Stream merge payload
+        required: true
+      responses:
+        202:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stream'
+          description: Accepted
+      tags:
+      - Stream
+  /revisions:
+    get:
+      description: Query revisions and get a list. The user will only see revisions
+        they have `read` access to.
+      parameters:
+      - description: The ID of the stream to retrieve revisions from
+        explode: true
+        in: query
+        name: stream
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Revisions'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Revision
+    post:
+      description: Create a new revision. User must have `contributor` permission
+        to the stream the permission belongs to.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRevision'
+        description: New Revision payload
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/created'
+          description: Created
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        400:
+          description: Bad Request
+      tags:
+      - Revision
+  /revisions/{id}:
+    delete:
+      description: Delete a single revision by ID. User must have `admin` permission
+        on the parent stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Revision
+    get:
+      description: Get a single revision by ID. User must have `read` permission on
+        the parent stream.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Revision'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Revision
+  /revisions/{id}/diff:
+    get:
+      description: Get a diff from two revisions. User must have `read` the streams
+        both revisions belong to.
+      parameters:
+      - description: The ID of the revision to compare from
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The ID of the revision to compare to
+        explode: true
+        in: query
+        name: to
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diff'
+          description: OK
+      tags:
+      - Revision
+  /users:
+    get:
+      description: Query users and get a list. There are no secret users here so no
+        permissons are required!
+      parameters:
+      - description: The ID of the stream a user has permissions on
+        explode: true
+        in: query
+        name: stream
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The role the user has for this stream
+        explode: true
+        in: query
+        name: stream_role
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The ID of the project a user has permissions on
+        explode: true
+        in: query
+        name: project
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The role the user has for this project
+        explode: true
+        in: query
+        name: project_role
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Level of permission granted to a resource
+        explode: true
+        in: query
+        name: permission
+        required: false
+        schema:
+          enum:
+          - read
+          - write
+          - admin
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/User'
+                title: Users
+                type: array
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - User
+  /users/{id}:
+    get:
+      description: Get a single user by ID. There are no secret users here so no permissons
+        are required!
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - User
+  /teams:
+    get:
+      description: Query teams and get a list. User will only see lists they have
+        `read` permissions to.
+      parameters:
+      - description: The ID of the stream a team has permissions on
+        explode: true
+        in: query
+        name: stream
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The ID of the project a team has permissions on
+        explode: true
+        in: query
+        name: project
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The specific team role to query
+        explode: true
+        in: query
+        name: role
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Level of permission granted to a resource. Leaving this blank
+          results in no permissions on a resource for a given role.
+        explode: true
+        in: query
+        name: permission
+        required: false
+        schema:
+          enum:
+          - read
+          - write
+          - admin
+          type: string
+        style: form
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Team'
+                title: Users
+                type: array
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Team
+    post:
+      description: Create a new team.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTeam'
+        description: New Team payload
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/created'
+          description: Created
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        400:
+          description: Bad Request
+      tags:
+      - Team
+  /teams/{id}:
+    delete:
+      description: Delete a team. User must have admin access to the team.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Team
+    get:
+      description: Get a single team by ID. User must have `read` access to the team.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: OK
+        404:
+          description: Not Found
+      tags:
+      - Team
+    put:
+      description: Update a team's information. User must have `write` access to the
+        team.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTeam'
+        description: New Team payload
+        required: true
+      responses:
+        202:
+          description: Accepted
+        409:
+          description: Conflict
+        401:
+          description: Not Authorized
+        404:
+          description: Not Found
+      tags:
+      - Team
+components:
+  schemas:
+    Created:
+      description: The resource id
+      example:
+        id: id
+      properties:
+        id:
+          title: id
+          type: string
+      required:
+      - id
+      title: New Resource
+      type: object
+    NewProject:
+      description: A Project
+      example:
+        roles:
+        - name: name
+          permission: '{}'
+          team_roles:
+            role: role
+            team: team
+        - name: name
+          permission: '{}'
+          team_roles:
+            role: role
+            team: team
+        name: name
+        description: description
+      properties:
+        name:
+          title: Project Name
+          type: string
+        description:
+          title: Project Description
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/Project_Role'
+          title: Project Roles
+          type: array
+      required:
+      - name
+      title: New Project
+      type: object
+    Project:
+      description: A Project
+      example:
+        streams:
+        - streams
+        - streams
+        roles:
+        - name: name
+          permission: '{}'
+          team_roles:
+            role: role
+            team: team
+        - name: name
+          permission: '{}'
+          team_roles:
+            role: role
+            team: team
+        name: name
+        description: description
+        id: id
+      properties:
+        id:
+          title: Project ID
+          type: string
+        name:
+          title: Project Name
+          type: string
+        description:
+          title: Project Description
+          type: string
+        streams:
+          items:
+            type: string
+          title: streams
+          type: array
+        roles:
+          items:
+            $ref: '#/components/schemas/Project_Role'
+          title: Project Roles
+          type: array
+      required:
+      - descriptions
+      - id
+      - name
+      - roles
+      - streams
+      title: Project
+      type: object
+    NewStream:
+      description: A Stream
+      example:
+        project_id: project_id
+        roles:
+        - name: name
+          project_roles:
+            role: role
+          permission: '{}'
+        - name: name
+          project_roles:
+            role: role
+          permission: '{}'
+        name: name
+        description: description
+        senders:
+        - senders
+        - senders
+      properties:
+        name:
+          title: Stream Name
+          type: string
+        description:
+          title: Stream description
+          type: string
+        project_id:
+          title: Project this stream is associated with
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/Stream_Role'
+          title: Stream Roles
+          type: array
+        senders:
+          description: The names of the schemas or compute libraries that can write
+            to this stream. For example `[ "bhom", "speckle", "3drepo" ]`
+          items:
+            type: string
+          title: Senders
+          type: array
+      required:
+      - name
+      - project_id
+      title: New Stream
+      type: object
+    Stream:
+      description: A Stream
+      example:
+        project_id: project_id
+        payload:
+        - '{}'
+        - '{}'
+        roles:
+        - name: name
+          project_roles:
+            role: role
+          permission: '{}'
+        - name: name
+          project_roles:
+            role: role
+          permission: '{}'
+        name: name
+        description: description
+        id: id
+        senders:
+        - senders
+        - senders
+      properties:
+        id:
+          title: Stream Id
+          type: string
+        name:
+          title: Stream Name
+          type: string
+        description:
+          title: Stream description
+          type: string
+        project_id:
+          title: Project this stream is associated with
+          type: string
+        payload:
+          items:
+            type: object
+          title: streams
+          type: array
+        roles:
+          items:
+            $ref: '#/components/schemas/Stream_Role'
+          title: Stream Roles
+          type: array
+        senders:
+          description: The names of the schemas or compute libraries that can write
+            to this stream. For example `[ "bhom", "speckle", "3drepo" ]`
+          items:
+            type: string
+          title: Senders
+          type: array
+      required:
+      - id
+      - name
+      - payload
+      - project_id
+      - roles
+      - schemas
+      title: Stream
+      type: object
+    Streams:
+      description: A list of Streams
+      items:
+        description: A Stream
+        properties:
+          id:
+            title: Stream Id
+            type: string
+          name:
+            title: Stream Name
+            type: string
+          description:
+            title: Stream description
+            type: string
+          project_id:
+            title: Project this stream is associated with
+            type: string
+          roles:
+            items:
+              description: An individual role for a stream. Note that a role with
+                null permissions cannot access the resource.
+              properties:
+                name:
+                  title: Stream Role Name
+                  type: string
+                permission:
+                  $ref: ./schemas/permission.yaml#/Permission
+                project_roles:
+                  properties:
+                    role:
+                      title: Project Role
+                      type: string
+                  required:
+                  - role
+                  title: Project Role
+                  type: object
+              required:
+              - name
+              - permission
+              - project_roles
+              title: Stream Role
+              type: object
+            title: Stream Roles
+            type: array
+          senders:
+            description: The names of the schemas or compute libraries that can write
+              to this stream. For example `[ "bhom", "speckle", "3drepo" ]`
+            items:
+              type: string
+            title: Senders
+            type: array
+        required:
+        - id
+        - name
+        - project_id
+        - roles
+        title: Stream
+        type: object
+      title: streams
+      type: array
+    BranchPayload:
+      description: A payload to configure a branch operation from a stream
+      example:
+        options:
+          project_id: project_id
+          roles:
+          - name: name
+            project_roles:
+              role: role
+            permission: '{}'
+          - name: name
+            project_roles:
+              role: role
+            permission: '{}'
+          name: name
+          description: description
+          senders:
+          - senders
+          - senders
+      properties:
+        options:
+          $ref: '#/components/schemas/NewStream'
+      required:
+      - options
+      title: Branch Operation Payload
+      type: object
+    MergePayload:
+      description: A payload to configure a merge operation between two streams
+      example:
+        from: from
+      properties:
+        from:
+          title: Stream to merge from
+          type: string
+      required:
+      - from
+      title: Merge Operation Payload
+      type: object
+    Revisions:
+      description: A list of revisions for a stream
+      example:
+        stream_id: stream_id
+        project_id: project_id
+        description: description
+        revisions:
+        - revisions
+        - revisions
+      properties:
+        stream_id:
+          title: Stream Id
+          type: string
+        description:
+          title: Stream description
+          type: string
+        project_id:
+          title: Project this revision is associated with
+          type: string
+        revisions:
+          items:
+            type: string
+          title: revision ids
+          type: array
+      required:
+      - project_id
+      - revisions
+      - stream_id
+      title: Revision List
+      type: object
+    Revision:
+      description: A single revision for a stream
+      example:
+        datetime: datetime
+        stream_id: stream_id
+        project_id: project_id
+        payload: '{}'
+        author:
+          username: username
+      properties:
+        stream_id:
+          title: Stream Id
+          type: string
+        project_id:
+          title: Project this revision is associated with
+          type: string
+        datetime:
+          description: UTC format
+          title: Timestamp
+          type: string
+        author:
+          $ref: '#/components/schemas/author'
+        payload:
+          title: payload
+          type: object
+      required:
+      - author
+      - datetime
+      - payload
+      - project_id
+      - stream_id
+      title: Revision
+      type: object
+    NewRevision:
+      description: A Revision
+      example:
+        stream_id: stream_id
+        delta: '{}'
+      properties:
+        stream_id:
+          title: Stream Id
+          type: string
+        delta:
+          $ref: ./schemas/delta.yaml#/Delta
+      required:
+      - stream_id
+      title: New Revision
+      type: object
+    Delta:
+      description: An AEC Delta Object
+      example:
+        deleted:
+        - deleted
+        - deleted
+        signature: signature
+        sender: sender
+        created:
+        - '{}'
+        - '{}'
+        from: from
+        to: to
+        updated:
+        - '{}'
+        - '{}'
+        hash: hash
+        timestamp: timestamp
+      properties:
+        hash:
+          title: Hash
+          type: string
+        created:
+          description: created
+          items:
+            type: object
+          title: created
+          type: array
+        deleted:
+          description: deleted
+          items:
+            type: string
+          title: deleted
+          type: array
+        updated:
+          description: updated
+          items:
+            type: object
+          title: updated
+          type: array
+        from:
+          description: from
+          title: from
+          type: string
+        to:
+          description: to
+          title: to
+          type: string
+        timestamp:
+          description: timestamp
+          title: timestamp
+          type: string
+        signature:
+          description: signature
+          title: signature
+          type: string
+        sender:
+          description: sender
+          title: sender
+          type: string
+      required:
+      - created
+      - deleted
+      - from
+      - hash
+      - sender
+      - signature
+      - timestamp
+      - to
+      - updated
+      title: Delta
+      type: object
+    User:
+      description: A User
+      example:
+        public_key: public_key
+        id: id
+        team_roles:
+          role: role
+          team: team
+      properties:
+        id:
+          title: User ID
+          type: string
+        team_roles:
+          $ref: '#/components/schemas/Team_Role'
+        public_key:
+          description: The user's public PGP signing Key
+          title: Public Key
+          type: string
+      required:
+      - id
+      - projects
+      - public_key
+      - streams
+      - team_roles
+      title: User
+      type: object
+    Team:
+      description: A team contains a list of roles that are attributed to users
+      example:
+        roles:
+        - name: name
+          description: ""
+          permission: '{}'
+        - name: name
+          description: ""
+          permission: '{}'
+        name: name
+        description: description
+        id: id
+      properties:
+        id:
+          title: ID
+          type: string
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description of the team
+          type: string
+        roles:
+          description: A list of roles. Should always contain the default and owner
+            roles
+          items:
+            $ref: '#/components/schemas/Role'
+          title: Roles
+          type: array
+      required:
+      - id
+      - name
+      - roles
+      title: A Team or Organisation
+      type: object
+    NewTeam:
+      description: A team contains a list of roles that are attributed to users
+      example:
+        roles:
+        - name: name
+          description: ""
+          permission: '{}'
+        - name: name
+          description: ""
+          permission: '{}'
+        name: name
+        description: description
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description of the team
+          type: string
+        roles:
+          description: A list of roles. Should always contain the default and owner
+            roles
+          items:
+            $ref: '#/components/schemas/Role'
+          title: Roles
+          type: array
+      required:
+      - name
+      - roles
+      title: A Team or Organisation
+      type: object
+    Permission:
+      enum:
+      - read
+      - write
+      - admin
+      type: string
+    created:
+      description: The resource id
+      example:
+        id: id
+      properties:
+        id:
+          title: id
+          type: string
+      required:
+      - id
+      title: New Resource
+      type: object
+    Diff:
+      description: A diff between two revisions
+      example:
+        revision_datetime: revision_datetime
+        author:
+          username: username
+        delta:
+          deleted:
+          - deleted
+          - deleted
+          signature: signature
+          sender: sender
+          created:
+          - '{}'
+          - '{}'
+          from: from
+          to: to
+          updated:
+          - '{}'
+          - '{}'
+          hash: hash
+          timestamp: timestamp
+      properties:
+        revision_datetime:
+          type: string
+        author:
+          $ref: '#/components/schemas/author'
+        delta:
+          $ref: '#/components/schemas/Delta'
+      required:
+      - author
+      - delta
+      - revision_datetime
+      title: Diff
+      type: object
+    Team_Role:
+      example:
+        role: role
+        team: team
+      properties:
+        team:
+          title: Team Name
+          type: string
+        role:
+          title: Team Role
+          type: string
+      required:
+      - role
+      - team
+    Project_Role:
+      description: An individual role for a project. Note that a role with null permissions
+        cannot access the resource.
+      example:
+        name: name
+        permission: '{}'
+        team_roles:
+          role: role
+          team: team
+      properties:
+        name:
+          title: Project Role Name
+          type: string
+        permission:
+          $ref: ./schemas/permission.yaml#/Permission
+        team_roles:
+          $ref: '#/components/schemas/Team_Role'
+      required:
+      - name
+      - permission
+      - team_roles
+    Project_Role_1:
+      example:
+        role: role
+      properties:
+        role:
+          title: Project Role
+          type: string
+      required:
+      - role
+    Stream_Role:
+      description: An individual role for a stream. Note that a role with null permissions
+        cannot access the resource.
+      example:
+        name: name
+        project_roles:
+          role: role
+        permission: '{}'
+      properties:
+        name:
+          title: Stream Role Name
+          type: string
+        permission:
+          $ref: ./schemas/permission.yaml#/Permission
+        project_roles:
+          $ref: '#/components/schemas/Project_Role_1'
+      required:
+      - name
+      - permission
+      - project_roles
+    author:
+      example:
+        username: username
+      properties:
+        username:
+          type: string
+      required:
+      - username
+    Role:
+      description: An individual role for a team. Note that a role with null permissions
+        cannot access the resource.
+      example:
+        name: name
+        description: ""
+        permission: '{}'
+      properties:
+        name:
+          description: The name of the role
+          title: Name
+          type: string
+        description:
+          description: A description of the role
+          title: Description
+        permission:
+          $ref: ./schemas/permission.yaml#/Permission
+      required:
+      - name
+      - permissions
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
