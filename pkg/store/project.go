@@ -1,46 +1,42 @@
 package store
 
 import (
-	model "github.com/antoinedao/aecdelta-go-server/pkg/model"
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
 
-func ProjectsGet(c *gin.Context) ([]model.Project, ConnectionError) {
+func ProjectsGet(c *gin.Context, project interface{}, stream string, name string, permission string) ConnectionError {
 
-	resource := []model.Project{}
+	fmt.Println(project)
+	fmt.Println(stream)
+	fmt.Println(name)
+	fmt.Println(permission)
 
-	return resource, nil
-
-}
-
-func ProjectsIdDelete(c *gin.Context) (string, ConnectionError) {
-
-	resource := "Accepted"
-
-	return resource, nil
+	return nil
 
 }
 
-func ProjectsIdGet(c *gin.Context) (model.Project, ConnectionError) {
+func ProjectsIdDelete(c *gin.Context, id string) ConnectionError {
 
-	resource := model.Project{}
+	fmt.Println(id)
 
-	return resource, nil
+	return nil
+}
+
+func ProjectsIdGet(c *gin.Context, project interface{}, id string) ConnectionError {
+
+	return nil
+}
+
+func ProjectsIdPut(c *gin.Context, id string, update interface{}) ConnectionError {
+
+	return nil
 
 }
 
-func ProjectsIdPut(c *gin.Context) (model.Project, ConnectionError) {
+func ProjectsPost(c *gin.Context, created interface{}, newProject interface{}) ConnectionError {
 
-	resource := model.Project{}
-
-	return resource, nil
-
-}
-
-func ProjectsPost(c *gin.Context) (model.Project, ConnectionError) {
-
-	resource := model.Project{}
-
-	return resource, nil
+	return nil
 
 }

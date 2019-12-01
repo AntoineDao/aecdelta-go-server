@@ -6,8 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	store "github.com/antoinedao/aecdelta-go-server/pkg/store"
 )
 
 func VerifyToken(c *gin.Context) (string, error) {
@@ -21,13 +19,6 @@ func VerifyToken(c *gin.Context) (string, error) {
 }
 
 func AuthorizeUser(token string, c *gin.Context) error {
-	user, err := store.UsersIdGet(c)
-
-	fmt.Println(user)
-
-	if err != nil {
-		return err
-	}
 
 	return nil
 }

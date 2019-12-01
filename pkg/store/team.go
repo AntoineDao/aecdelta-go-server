@@ -1,46 +1,35 @@
 package store
 
 import (
-	model "github.com/antoinedao/aecdelta-go-server/pkg/model"
 	"github.com/gin-gonic/gin"
 )
 
-func TeamsGet(c *gin.Context) (model.Team, ConnectionError) {
+func TeamsGet(c *gin.Context, teams interface{}, stream string, project string, role string, permission string) ConnectionError {
 
-	resource := model.Team{}
-
-	return resource, nil
+	return nil
 
 }
 
-func TeamsIdDelete(c *gin.Context) (string, ConnectionError) {
+func TeamsIdDelete(c *gin.Context, id string) ConnectionError {
 
-	resource := "resource"
-
-	return resource, nil
+	return nil
 
 }
 
-func TeamsIdGet(c *gin.Context) (model.Team, ConnectionError) {
+func TeamsIdGet(c *gin.Context, team interface{}, id string) ConnectionError {
 
-	resource := model.Team{}
-
-	return resource, nil
+	return nil
 
 }
 
-func TeamsIdPut(c *gin.Context) (model.Team, ConnectionError) {
+func TeamsIdPut(c *gin.Context, id string, update interface{}) ConnectionError {
 
-	resource := model.Team{}
-
-	return resource, nil
+	return nil
 
 }
 
-func TeamsPost(c *gin.Context) (model.Team, ConnectionError) {
+func TeamsPost(c *gin.Context, created interface{}, new interface{}) ConnectionError {
 
-	resource := model.Team{}
-
-	return resource, nil
+	return nil
 
 }

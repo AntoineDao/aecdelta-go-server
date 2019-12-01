@@ -1,46 +1,35 @@
 package store
 
 import (
-	model "github.com/antoinedao/aecdelta-go-server/pkg/model"
 	"github.com/gin-gonic/gin"
 )
 
-func RevisionsGet(c *gin.Context) ([]model.Revision, ConnectionError) {
+func RevisionsGet(c *gin.Context, revision interface{}, stream string) ConnectionError {
 
-	resource := []model.Revision{}
-
-	return resource, nil
+	return nil
 
 }
 
-func RevisionsIdDelete(c *gin.Context) (string, ConnectionError) {
+func RevisionsIdDelete(c *gin.Context, id string) ConnectionError {
 
-	resource := "resource"
-
-	return resource, nil
+	return nil
 
 }
 
-func RevisionsIdDiffGet(c *gin.Context) (model.Diff, ConnectionError) {
+func RevisionsIdDiffGet(c *gin.Context, diff interface{}, id string, to string) ConnectionError {
 
-	resource := model.Diff{}
-
-	return resource, nil
+	return nil
 
 }
 
-func RevisionsIdGet(c *gin.Context) (model.Revision, ConnectionError) {
+func RevisionsIdGet(c *gin.Context, revision interface{}, id string) ConnectionError {
 
-	resource := model.Revision{}
-
-	return resource, nil
+	return nil
 
 }
 
-func RevisionsPost(c *gin.Context) (model.Revision, ConnectionError) {
+func RevisionsPost(c *gin.Context, created interface{}, new interface{}) ConnectionError {
 
-	resource := model.Revision{}
-
-	return resource, nil
+	return nil
 
 }

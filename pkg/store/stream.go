@@ -1,62 +1,47 @@
 package store
 
 import (
-	model "github.com/antoinedao/aecdelta-go-server/pkg/model"
 	"github.com/gin-gonic/gin"
 )
 
-func StreamsGet(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsGet(c *gin.Context, streams interface{}, name string, project string, schema string) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsIdBranchPost(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsIdBranchPost(c *gin.Context, stream interface{}, id string, branchPayload interface{}) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsIdDelete(c *gin.Context) (string, ConnectionError) {
+func StreamsIdDelete(c *gin.Context, id string) ConnectionError {
 
-	resource := "resource"
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsIdGet(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsIdGet(c *gin.Context, stream interface{}, id string) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsIdMergePost(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsIdMergePost(c *gin.Context, stream interface{}, id string, mergePayload interface{}) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsIdPut(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsIdPut(c *gin.Context, id string, update interface{}) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
 
-func StreamsPost(c *gin.Context) (model.Stream, ConnectionError) {
+func StreamsPost(c *gin.Context, created interface{}, new interface{}) ConnectionError {
 
-	resource := model.Stream{}
-
-	return resource, nil
+	return nil
 
 }
