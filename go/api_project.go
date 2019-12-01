@@ -10,8 +10,6 @@
 package openapi
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	// WARNING!
@@ -22,80 +20,105 @@ import (
 	//    store "github.com/myname/myrepo/pkg/store"
 	//
 	store "github.com/antoinedao/aecdelta-go-server/pkg/store"
-
 )
 
-// ProjectsGet - 
+// ProjectsGet - Query projects and retrieve a list. Will only return projects user has &#x60;read&#x60; acces to.
 func ProjectsGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get stream query parameter
+	stream := c.DefaultQuery("stream", "")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.ProjectsGet(c)
+	// Get name query parameter
+	name := c.DefaultQuery("name", "")
+
+	// Get permission query parameter
+	permission := c.DefaultQuery("permission", "")
+
+	// Initialise response object
+	response := []Project{}
+
+	// Execute operation from the store package
+	err := store.ProjectsGet(c, &response, stream, name, permission)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// ProjectsIdDelete - 
+// ProjectsIdDelete - Delete a project. Requires &#x60;admin&#x60; access to that project.
 func ProjectsIdDelete(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.ProjectsIdDelete(c)
+	// Set default response
+	response := "Accepted"
+
+	// Execute operation from the store package
+	err := store.ProjectsIdDelete(c, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(202, response)
 }
 
-// ProjectsIdGet - 
+// ProjectsIdGet - Get a project by ID. Required &#x60;read&#x60; access to that project.
 func ProjectsIdGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.ProjectsIdGet(c)
+	// Initialise response object
+	response := Project{}
+
+	// Execute operation from the store package
+	err := store.ProjectsIdGet(c, &response, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// ProjectsIdPut - 
+// ProjectsIdPut - Update a project&#39;s properties. Requires &#x60;write&#x60; access to that project.
 func ProjectsIdPut(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.ProjectsIdPut(c)
+	// Get newProject payload
+	var newProject NewProject
+	c.BindJSON(&newProject)
+
+	// Set default response
+	response := "Accepted"
+
+	// Execute operation from the store package
+	err := store.ProjectsIdPut(c, id, newProject)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(202, response)
 }
 
-// ProjectsPost - 
+// ProjectsPost - Create a new project.
 func ProjectsPost(c *gin.Context) {
-	// Run Auth checks here
+	// Get newProject payload
+	var newProject NewProject
+	c.BindJSON(&newProject)
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.ProjectsPost(c)
+	// Initialise response object
+	response := Created{}
+
+	// Execute operation from the store package
+	err := store.ProjectsPost(c, &response, newProject)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(201, response)
 }

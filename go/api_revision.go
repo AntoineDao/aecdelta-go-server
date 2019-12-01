@@ -10,8 +10,6 @@
 package openapi
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	// WARNING!
@@ -22,80 +20,98 @@ import (
 	//    store "github.com/myname/myrepo/pkg/store"
 	//
 	store "github.com/antoinedao/aecdelta-go-server/pkg/store"
-
 )
 
-// RevisionsGet - 
+// RevisionsGet - Query revisions and get a list. The user will only see revisions they have &#x60;read&#x60; access to.
 func RevisionsGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get stream query parameter
+	stream := c.DefaultQuery("stream", "")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.RevisionsGet(c)
+	// Initialise response object
+	response := Revisions{}
+
+	// Execute operation from the store package
+	err := store.RevisionsGet(c, &response, stream)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// RevisionsIdDelete - 
+// RevisionsIdDelete - Delete a single revision by ID. User must have &#x60;admin&#x60; permission on the parent stream.
 func RevisionsIdDelete(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.RevisionsIdDelete(c)
+	// Set default response
+	response := "Accepted"
+
+	// Execute operation from the store package
+	err := store.RevisionsIdDelete(c, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(202, response)
 }
 
-// RevisionsIdDiffGet - 
+// RevisionsIdDiffGet - Get a diff from two revisions. User must have &#x60;read&#x60; the streams both revisions belong to.
 func RevisionsIdDiffGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.RevisionsIdDiffGet(c)
+	// Get to query parameter
+	to := c.DefaultQuery("to", "")
+
+	// Initialise response object
+	response := Diff{}
+
+	// Execute operation from the store package
+	err := store.RevisionsIdDiffGet(c, &response, id, to)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// RevisionsIdGet - 
+// RevisionsIdGet - Get a single revision by ID. User must have &#x60;read&#x60; permission on the parent stream.
 func RevisionsIdGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.RevisionsIdGet(c)
+	// Initialise response object
+	response := Revision{}
+
+	// Execute operation from the store package
+	err := store.RevisionsIdGet(c, &response, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// RevisionsPost - 
+// RevisionsPost - Create a new revision. User must have &#x60;contributor&#x60; permission to the stream the permission belongs to.
 func RevisionsPost(c *gin.Context) {
-	// Run Auth checks here
+	// Get newRevision payload
+	var newRevision NewRevision
+	c.BindJSON(&newRevision)
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.RevisionsPost(c)
+	// Initialise response object
+	response := Created{}
+
+	// Execute operation from the store package
+	err := store.RevisionsPost(c, &response, newRevision)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(201, response)
 }

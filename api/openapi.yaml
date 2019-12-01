@@ -184,10 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Streams'
-                title: Streams
-                type: array
+                $ref: '#/components/schemas/Streams'
           description: OK
         404:
           description: Not Found
@@ -602,7 +599,7 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/Team'
-                title: Users
+                title: Team
                 type: array
           description: OK
         404:
@@ -1251,6 +1248,7 @@ components:
       - read
       - write
       - admin
+      title: permission
       type: string
     created:
       description: The resource id

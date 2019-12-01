@@ -10,8 +10,6 @@
 package openapi
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	// WARNING!
@@ -22,80 +20,108 @@ import (
 	//    store "github.com/myname/myrepo/pkg/store"
 	//
 	store "github.com/antoinedao/aecdelta-go-server/pkg/store"
-
 )
 
-// TeamsGet - 
+// TeamsGet - Query teams and get a list. User will only see lists they have &#x60;read&#x60; permissions to.
 func TeamsGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get stream query parameter
+	stream := c.DefaultQuery("stream", "")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.TeamsGet(c)
+	// Get project query parameter
+	project := c.DefaultQuery("project", "")
+
+	// Get role query parameter
+	role := c.DefaultQuery("role", "")
+
+	// Get permission query parameter
+	permission := c.DefaultQuery("permission", "")
+
+	// Initialise response object
+	response := []Team{}
+
+	// Execute operation from the store package
+	err := store.TeamsGet(c, &response, stream, project, role, permission)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// TeamsIdDelete - 
+// TeamsIdDelete - Delete a team. User must have admin access to the team.
 func TeamsIdDelete(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.TeamsIdDelete(c)
+	// Set default response
+	response := "Accepted"
+
+	// Execute operation from the store package
+	err := store.TeamsIdDelete(c, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(202, response)
 }
 
-// TeamsIdGet - 
+// TeamsIdGet - Get a single team by ID. User must have &#x60;read&#x60; access to the team.
 func TeamsIdGet(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.TeamsIdGet(c)
+	// Initialise response object
+	response := Team{}
+
+	// Execute operation from the store package
+	err := store.TeamsIdGet(c, &response, id)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(200, response)
 }
 
-// TeamsIdPut - 
+// TeamsIdPut - Update a team&#39;s information. User must have &#x60;write&#x60; access to the team.
 func TeamsIdPut(c *gin.Context) {
-	// Run Auth checks here
+	// Get id path parameter
+	id := c.Param("id")
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.TeamsIdPut(c)
+	// Get newTeam payload
+	var newTeam NewTeam
+	c.BindJSON(&newTeam)
+
+	// Set default response
+	response := "Accepted"
+
+	// Execute operation from the store package
+	err := store.TeamsIdPut(c, id, newTeam)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(202, response)
 }
 
-// TeamsPost - 
+// TeamsPost - Create a new team.
 func TeamsPost(c *gin.Context) {
-	// Run Auth checks here
+	// Get newTeam payload
+	var newTeam NewTeam
+	c.BindJSON(&newTeam)
 
-	// Run data store operation
-	// `resource` must be of type map[string]interface{}
-	resource, err := store.TeamsPost(c)
+	// Initialise response object
+	response := Created{}
+
+	// Execute operation from the store package
+	err := store.TeamsPost(c, &response, newTeam)
 
 	if err != nil {
 		c.AbortWithStatusJSON(err.StatusCode(), err)
 	}
 
-	c.JSON(http.StatusOK, resource)
+	c.JSON(201, response)
 }
